@@ -1,5 +1,6 @@
 package com.example.drinkrater
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -25,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.drinkrater.ui.theme.DrinkRaterTheme
 import retrofit2.Call
 import retrofit2.Response
@@ -38,12 +38,6 @@ class ReviewListActivity : ComponentActivity() {
         setContent {
             DrinkRaterTheme {
                 ReviewListScreen()
-                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting2(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }*/
             }
         }
     }
@@ -63,7 +57,9 @@ class ReviewListActivity : ComponentActivity() {
         LazyColumn {
             items(reviews) { review ->
                 ReviewCard(review) {
-                    // Переход на экран полного отзыва
+                    val intent = Intent(this@ReviewListActivity, SingleReviewActivity::class.java)
+                    intent.putExtra("REVIEW_ID", review.id)
+                    startActivity(intent)
                 }
             }
         }
@@ -119,7 +115,7 @@ class ReviewListActivity : ComponentActivity() {
 
     @Preview(showBackground = true)
     @Composable
-    fun PreviewLoginScreen() {
+    fun PreviewReviewList() {
         val reviewsToShow = listOf(
             Review(
                 id = 1,
