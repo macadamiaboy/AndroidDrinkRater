@@ -1,13 +1,15 @@
 package com.example.drinkrater
 
+import com.google.gson.annotations.SerializedName
+
 data class Review(
-    val id: Int,
+    val id: Int? = null,
     val name: String,
     val rating: Int,
     val price: Int,
     val description: String,
     val producer: String,
     val abv: Float,
-    val userId: Int
+    @SerializedName("user_id") val userId: Int
 )
 

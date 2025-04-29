@@ -12,6 +12,6 @@ interface ApiService {
     @GET("/reviews/{id}")
     fun getReviewById(@Path("id") id: Int): Call<Review>
 
-    //@POST("/your_endpoint")
-    //fun postData(@Body data: YourDataClass): Call<YourDataClass>
+    @POST("/reviews")
+    fun postData(@Body review: Review): Call<Void>
 }

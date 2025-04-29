@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -36,12 +36,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             DrinkRaterTheme {
                 LoginScreen()
-                /*Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }*/
             }
         }
     }
@@ -86,9 +80,9 @@ class MainActivity : ComponentActivity() {
                 Text(errorMessage, color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            //Make it EleveatedButton
-            Button(onClick = {
-                if (username == "user" && password == "password") { // Замените на вашу логику проверки
+            //Make it ElevatedButton
+            ElevatedButton(onClick = {
+                if (username == "user" && password == "password") { // Заменить на вашу логику проверки
                     val intent = Intent(this@MainActivity, ReviewListActivity::class.java)
                     startActivity(intent)
                 } else {
@@ -108,12 +102,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-/*
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    DrinkRaterTheme {
-        Greeting("Android")
-    }
-}*/
