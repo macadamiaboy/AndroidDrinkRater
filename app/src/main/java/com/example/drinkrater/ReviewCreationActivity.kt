@@ -1,5 +1,6 @@
 package com.example.drinkrater
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -55,14 +57,14 @@ class ReviewCreationActivity : ComponentActivity() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(value = name, onValueChange = { name = it }, label = { Text("Название") })
             TextField(value = rating.toString(), onValueChange = { rating = it.toIntOrNull() ?: 0 }, label = { Text("Рейтинг (0-10)") })
             TextField(value = price.toString(), onValueChange = { price = it.toIntOrNull() ?: 0 }, label = { Text("Цена") })
-            TextField(value = description, onValueChange = { description = it }, label = { Text("Описание") })
+            TextField(value = description, onValueChange = { description = it }, label = { Text("Описание") }, modifier = Modifier.width(280.dp), maxLines = Int.MAX_VALUE, singleLine = false)
             TextField(value = producer, onValueChange = { producer = it }, label = { Text("Производитель") })
             TextField(value = abv.toString(), onValueChange = { abv = it.toFloatOrNull() ?: 0f }, label = { Text("ABV") })
             TextField(value = userId.toString(), onValueChange = { userId = it.toIntOrNull() ?: 0 }, label = { Text("ID пользователя") })
@@ -71,7 +73,10 @@ class ReviewCreationActivity : ComponentActivity() {
 
             Button(onClick = {
                 val review = Review(null, name, rating, price, description, producer, abv, userId)
+                val intent = Intent(this@ReviewCreationActivity, ReviewListActivity::class.java)
                 submitReview(review)
+                startActivity(intent)
+                finish()
             },
                 modifier = Modifier
                     .height(56.dp)
