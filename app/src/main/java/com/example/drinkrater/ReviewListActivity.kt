@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.drinkrater
 
 import android.content.Intent
@@ -21,10 +23,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -62,21 +67,32 @@ class ReviewListActivity : ComponentActivity() {
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            // Отображение списка отзывов
-            LazyColumn {
-                items(reviews) { review ->
-                    ReviewCard(review) {
-                        val intent = Intent(this@ReviewListActivity, SingleReviewActivity::class.java)
-                        intent.putExtra("REVIEW_ID", review.id)
-                        startActivity(intent)
+            Column {
+                TopAppBar(
+                    title = { Text("") },
+                    actions = {
+                        TextButton(onClick = {
+                            val intent = Intent(this@ReviewListActivity, ProfileActivity::class.java)
+                            startActivity(intent)
+                        }) {
+                            Text("Открыть профиль")
+                        }
+                    }
+                )
+
+                LazyColumn {
+                    items(reviews) { review ->
+                        ReviewCard(review) {
+                            val intent = Intent(this@ReviewListActivity, SingleReviewActivity::class.java)
+                            intent.putExtra("REVIEW_ID", review.id)
+                            startActivity(intent)
+                        }
                     }
                 }
             }
 
-            // Кнопка с иконкой плюсика
             FloatingActionButton(
                 onClick = {
-                    // Открытие нового Activity
                     val intent = Intent(this@ReviewListActivity, ReviewCreationActivity::class.java)
                     startActivity(intent)
                 },

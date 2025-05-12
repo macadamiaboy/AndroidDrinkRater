@@ -21,4 +21,7 @@ interface ApiService {
 
     @POST("/users")
     fun postUser(@Body userRequest: UserRequest): Call<UserResponse>
+
+    @GET("/users")
+    fun getUser(@Header("X-Auth-Token") authToken: String): Call<User>
 }
