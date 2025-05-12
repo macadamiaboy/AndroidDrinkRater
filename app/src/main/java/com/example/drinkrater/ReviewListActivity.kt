@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.drinkrater.SharedPreferencesUtil.getToken
 import com.example.drinkrater.ui.theme.DrinkRaterTheme
 import retrofit2.Call
 import retrofit2.Response
@@ -90,21 +91,28 @@ class ReviewListActivity : ComponentActivity() {
 
     private fun fetchReviews(onResult: (List<Review>) -> Unit) {
         Log.d("ReviewListActivity", "Fetching reviews...")
-        val call = ApiClient.apiService.getReviews()
-        call.enqueue(object : Callback<List<Review>> {
-            override fun onResponse(call: Call<List<Review>>, response: Response<List<Review>>) {
-                Log.d("ReviewListActivity", "Response received: ${response.code()}")
-                if (response.isSuccessful) {
-                    onResult(response.body() ?: emptyList())
-                } else {
-                    Log.e("ReviewListActivity", "Error: ${response.errorBody()?.string()}")
-                }
-            }
+        val authToken = getToken(this)
 
-            override fun onFailure(call: Call<List<Review>>, t: Throwable) {
-                Log.e("ReviewListActivity", "Failed to fetch reviews: ${t.message}")
-            }
-        })
+        if (authToken != null) {
+            val call = ApiClient.apiService.getReviews(authToken)
+            call.enqueue(object : Callback<List<Review>> {
+                override fun onResponse(call: Call<List<Review>>, response: Response<List<Review>>) {
+                    Log.d("ReviewListActivity", "Response received: ${response.code()}")
+                    if (response.isSuccessful) {
+                        onResult(response.body() ?: emptyList())
+                    } else {
+                        Log.e("ReviewListActivity", "Error: ${response.errorBody()?.string()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<List<Review>>, t: Throwable) {
+                    Log.e("ReviewListActivity", "Failed to fetch reviews: ${t.message}")
+                }
+            })
+        } else {
+            Log.e("ReviewListActivity", "Error: you're bot authorized. Cannot fetch reviews.")
+            onResult(emptyList())
+        }
     }
 
     private fun ratingView(number: Int): String = "$number / 10"

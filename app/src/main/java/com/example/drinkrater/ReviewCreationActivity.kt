@@ -2,6 +2,7 @@ package com.example.drinkrater
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.drinkrater.SharedPreferencesUtil.getToken
 import com.example.drinkrater.ui.theme.DrinkRaterTheme
 import retrofit2.Call
 import retrofit2.Response
@@ -52,7 +54,7 @@ class ReviewCreationActivity : ComponentActivity() {
         var description by remember { mutableStateOf("") }
         var producer by remember { mutableStateOf("") }
         var abv by remember { mutableStateOf(0f) }
-        var userId by remember { mutableStateOf(0) }
+        //var userId by remember { mutableStateOf(0) }
 
         Column(
             modifier = Modifier
@@ -67,12 +69,12 @@ class ReviewCreationActivity : ComponentActivity() {
             TextField(value = description, onValueChange = { description = it }, label = { Text("Описание") }, modifier = Modifier.width(280.dp), maxLines = Int.MAX_VALUE, singleLine = false)
             TextField(value = producer, onValueChange = { producer = it }, label = { Text("Производитель") })
             TextField(value = abv.toString(), onValueChange = { abv = it.toFloatOrNull() ?: 0f }, label = { Text("ABV") })
-            TextField(value = userId.toString(), onValueChange = { userId = it.toIntOrNull() ?: 0 }, label = { Text("ID пользователя") })
+            //TextField(value = userId.toString(), onValueChange = { userId = it.toIntOrNull() ?: 0 }, label = { Text("ID пользователя") })
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(onClick = {
-                val review = Review(null, name, rating, price, description, producer, abv, userId)
+                val review = Review(null, name, rating, price, description, producer, abv)
                 val intent = Intent(this@ReviewCreationActivity, ReviewListActivity::class.java)
                 submitReview(review)
                 startActivity(intent)
@@ -88,19 +90,26 @@ class ReviewCreationActivity : ComponentActivity() {
     }
 
     private fun submitReview(review: Review) {
-        ApiClient.apiService.postData(review).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@ReviewCreationActivity, "Отзыв успешно сохранен", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this@ReviewCreationActivity, "Ошибка при сохранении отзыва", Toast.LENGTH_SHORT).show()
-                }
-            }
+        val authToken = getToken(this)
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@ReviewCreationActivity, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        if (authToken != null) {
+            ApiClient.apiService.postData(authToken, review).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@ReviewCreationActivity, "Отзыв успешно сохранен", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@ReviewCreationActivity, "Ошибка при сохранении отзыва", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@ReviewCreationActivity, "Ошибка сети: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        } else {
+            Log.e("ReviewListActivity", "Error: you're bot authorized. Cannot fetch reviews.")
+            Toast.makeText(this, "Вы не авторизованы. Пожалуйста, войдите в систему.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @Preview(showBackground = true)

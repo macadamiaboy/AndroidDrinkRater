@@ -10,6 +10,6 @@ data class Review(
     val description: String,
     val producer: String,
     val abv: Float,
-    @SerializedName("user_id") val userId: Int
+    @SerializedName("user_id") val userId: Int? = null
 )
 

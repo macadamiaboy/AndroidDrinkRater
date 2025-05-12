@@ -2,6 +2,7 @@ package com.example.drinkrater
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.drinkrater.SharedPreferencesUtil.getToken
 import com.example.drinkrater.ui.theme.DrinkRaterTheme
 import retrofit2.Call
 import retrofit2.Response
@@ -117,22 +119,29 @@ class SingleReviewActivity : ComponentActivity() {
     }
 
     private fun fetchReviewById(id: Int, onResult: (Review?) -> Unit) {
-        val call = ApiClient.apiService.getReviewById(id)
-        call.enqueue(object : Callback<Review> {
-            override fun onResponse(call: Call<Review>, response: Response<Review>) {
-                if (response.isSuccessful) {
-                    onResult(response.body())
-                } else {
-                    Log.e("ReviewDetailActivity", "Error: ${response.errorBody()?.string()}")
+        val authToken = getToken(this)
+
+        if (authToken != null) {
+            val call = ApiClient.apiService.getReviewById(authToken, id)
+            call.enqueue(object : Callback<Review> {
+                override fun onResponse(call: Call<Review>, response: Response<Review>) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        Log.e("ReviewDetailActivity", "Error: ${response.errorBody()?.string()}")
+                        onResult(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<Review>, t: Throwable) {
+                    Log.e("ReviewDetailActivity", "Failed to fetch review: ${t.message}")
                     onResult(null)
                 }
-            }
-
-            override fun onFailure(call: Call<Review>, t: Throwable) {
-                Log.e("ReviewDetailActivity", "Failed to fetch review: ${t.message}")
-                onResult(null)
-            }
-        })
+            })
+        } else {
+            Log.e("ReviewListActivity", "Error: you're bot authorized. Cannot fetch reviews.")
+            Toast.makeText(this, "Вы не авторизованы. Пожалуйста, войдите в систему.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @Preview(showBackground = true)
