@@ -33,12 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.drinkrater.ApiClient.apiService
+import com.example.drinkrater.SharedPreferencesUtil.saveToken
 import com.example.drinkrater.ui.theme.DrinkRaterTheme
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Callback
-import androidx.core.content.edit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +65,8 @@ class MainActivity : ComponentActivity() {
                     title = { Text("") },
                     actions = {
                         TextButton(onClick = {
-                            // Логика для создания пользователя
+                            val intent = Intent(this@MainActivity, UserCreationActivity::class.java)
+                            startActivity(intent)
                         }) {
                             Text("Создать пользователя")
                         }
@@ -130,8 +132,7 @@ class MainActivity : ComponentActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
                     val token = response.body()?.token
-
-                    saveToken(token)
+                    saveToken(this@MainActivity, token)
 
                     val intent = Intent(this@MainActivity, ReviewListActivity::class.java)
                     startActivity(intent)
@@ -144,10 +145,5 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this@MainActivity, "Network error", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun saveToken(token: String?) {
-        val sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE)
-        sharedPreferences.edit() { putString("auth_token", token) }
     }
 }

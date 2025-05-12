@@ -54,22 +54,22 @@ class ReviewCreationActivity : ComponentActivity() {
         var description by remember { mutableStateOf("") }
         var producer by remember { mutableStateOf("") }
         var abv by remember { mutableStateOf(0f) }
-        //var userId by remember { mutableStateOf(0) }
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 32.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
+                .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextField(value = name, onValueChange = { name = it }, label = { Text("Название") })
             TextField(value = rating.toString(), onValueChange = { rating = it.toIntOrNull() ?: 0 }, label = { Text("Рейтинг (0-10)") })
             TextField(value = price.toString(), onValueChange = { price = it.toIntOrNull() ?: 0 }, label = { Text("Цена") })
             TextField(value = description, onValueChange = { description = it }, label = { Text("Описание") }, modifier = Modifier.width(280.dp), maxLines = Int.MAX_VALUE, singleLine = false)
             TextField(value = producer, onValueChange = { producer = it }, label = { Text("Производитель") })
             TextField(value = abv.toString(), onValueChange = { abv = it.toFloatOrNull() ?: 0f }, label = { Text("ABV") })
-            //TextField(value = userId.toString(), onValueChange = { userId = it.toIntOrNull() ?: 0 }, label = { Text("ID пользователя") })
 
             Spacer(modifier = Modifier.height(16.dp))
 
