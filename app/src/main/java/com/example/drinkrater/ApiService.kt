@@ -14,4 +14,7 @@ interface ApiService {
 
     @POST("/reviews")
     fun postData(@Body review: Review): Call<Void>
+
+    @POST("auth/login")
+    fun login(@Body loginRequest: LoginRequest): Call<LoginResponse>
 }
